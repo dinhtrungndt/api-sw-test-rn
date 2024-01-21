@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var modelUser = require("../models/user");
+var modelPosts = require("../models/posts");
 var mongoose = require("mongoose");
 var bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
@@ -68,6 +69,9 @@ router.post("/login", async function (req, res, next) {
       return res.json({ status: 0, message: "Mật khẩu không chính xác" });
     }
 
+    // Lấy danh sách bài viết của người dùng
+    const posts = await modelPosts.find({ idUser: user._id });
+
     // Tạo token xác thực
     const token = jwt.sign({ userId: user._id }, "your_secret_key");
     res.json({
@@ -83,6 +87,7 @@ router.post("/login", async function (req, res, next) {
         avatar: user.avatar,
         coverImage: user.coverImage,
       },
+      posts,
       token: token,
     });
   } catch (err) {

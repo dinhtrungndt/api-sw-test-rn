@@ -1,12 +1,13 @@
 var express = require("express");
 var router = express.Router();
 var modelPosts = require("../models/posts");
+var modelUser = require("../models/user");
 
 // lấy danh sách bài viết
 //http://localhost:9999/posts/get-posts
 router.get("/get-posts", async function (req, res, next) {
-  var data = await modelPosts.find();
-  res.json(data);
+  var data = await modelPosts.find().populate("idUser");
+  res.json({ status: 1, message: "Thành công", data });
 });
 
 // đăng bài viết
