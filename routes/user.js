@@ -6,14 +6,14 @@ var bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
 
 // lấy danh sách người dùng
-//http://localhost:8080/user/get-user
+//http://localhost:9999/user/get-user
 router.get("/get-user", async function (req, res, next) {
   var data = await modelUser.find();
   res.json(data);
 });
 
 // Đăng ký
-// http://localhost:8080/user/add-user
+// http://localhost:9999/user/add-user
 router.post("/add-user", async function (req, res, next) {
   try {
     const { email, password } = req.body;
@@ -48,7 +48,7 @@ router.post("/add-user", async function (req, res, next) {
 });
 
 // Đăng nhập
-//http://localhost:8080/user/login
+//http://localhost:9999/user/login
 router.post("/login", async function (req, res, next) {
   try {
     const { email, password } = req.body;
@@ -91,7 +91,7 @@ router.post("/login", async function (req, res, next) {
 });
 
 // Xóa người dùng
-//http://localhost:8080/user/delete/:id
+//http://localhost:9999/user/delete/:id
 router.delete("/delete/:id", async function (req, res, next) {
   try {
     const { id } = req.params;
@@ -118,7 +118,7 @@ router.delete("/delete/:id", async function (req, res, next) {
 });
 
 // Cập nhập người dùng
-//http://localhost:8080/user/update/:id
+//http://localhost:9999/user/update/:id
 router.put("/update/:id", async function (req, res, next) {
   try {
     const { id } = req.params;
