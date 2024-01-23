@@ -5,10 +5,10 @@ const ObjectId = Schema.ObjectId;
 const friend = new Schema(
   {
     id: { type: ObjectId },
+    idUser1: { type: ObjectId, ref: "users" },
+    idUser2: { type: ObjectId, ref: "users" },
     time: { type: String },
     status: { type: String },
-    idUser1: { type: ObjectId, ref: "user" },
-    idUser2: { type: ObjectId, ref: "user" },
   },
   {
     versionKey: false,

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
-const user = new Schema(
+const users = new Schema(
   {
     id: { type: ObjectId },
     name: { type: String },
@@ -15,7 +15,7 @@ const user = new Schema(
       lowercase: true,
     },
     password: { type: String, required: true },
-    sex: { type: String },
+    gender: { type: String },
     date: { type: String },
     avatar: { type: String },
     coverImage: { type: String },
@@ -26,4 +26,4 @@ const user = new Schema(
 );
 
 module.exports =
-  mongoose.models.user || mongoose.model("user", user);
+  mongoose.models.users || mongoose.model("users", users);

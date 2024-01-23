@@ -5,9 +5,9 @@ const ObjectId = Schema.ObjectId;
 const reaction = new Schema(
   {
     id: { type: ObjectId },
-    type: { type: String },
-    idUser: { type: ObjectId, ref: "user" },
+    idUsers: { type: ObjectId, ref: "users" },
     idPosts: { type: ObjectId, ref: "posts" },
+    type: { type: String },
   },
   {
     versionKey: false,

@@ -5,11 +5,11 @@ const ObjectId = Schema.ObjectId;
 const message = new Schema(
   {
     id: { type: ObjectId },
+    idSender: { type: ObjectId, ref: "users" },
+    idReceiver: { type: ObjectId, ref: "users" },
     content: { type: String },
     status: { type: String },
     time: { type: String },
-    idSender: { type: ObjectId, ref: "user" },
-    idReceiver: { type: ObjectId, ref: "user" },
   },
   {
     versionKey: false,

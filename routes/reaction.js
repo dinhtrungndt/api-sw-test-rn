@@ -5,7 +5,8 @@ var modelReaction = require("../models/reaction");
 // lấy danh sách bài viết
 //http://localhost:9999/reaction/get
 router.get("/get", async function (req, res, next) {
-  var data = await modelReaction.find().populate("idUser").populate("idPosts");
+  var idPosts = req.query.idPosts;
+  var data = await modelReaction.find({idPosts: idPosts});
   res.json({ status: 1, message: "Thành công", data });
 });
 

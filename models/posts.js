@@ -2,35 +2,15 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
-const typePosts = new Schema(
-    {
-        id: { type: ObjectId },
-        name: { type: String },
-    },
-    {
-        versionKey: false,
-    }
-    );
-
-const object = new Schema(
-  {
-    id: { type: ObjectId },
-    name: { type: String },
-  },
-  {
-    versionKey: false,
-  }
-);
-
 const posts = new Schema(
   {
     id: { type: ObjectId },
-    content: { type: String },
-    time: { type: String },
-    idObject: [object],
-    idTypePosts: [typePosts],
-    idShare: { type: ObjectId },
-    idUser: { type: ObjectId, ref: "user" },
+    content: { type: String, required: true },
+    createAt: { type: Date, default: Date.now },
+    idObject: { type: ObjectId, ref: "object" },
+    idTypePosts: { type: ObjectId, ref: "typePosts" },
+    idShare: { type: ObjectId, ref: "posts" },
+    idUsers: { type: ObjectId, ref: "users" },
   },
   {
     versionKey: false,

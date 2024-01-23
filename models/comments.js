@@ -5,11 +5,11 @@ const ObjectId = Schema.ObjectId;
 const comments = new Schema(
   {
     id: { type: ObjectId },
-    content: { type: String },
-    time: { type: String },
-    idUser: { type: ObjectId, ref: "user" },
+    idUsers: { type: ObjectId, ref: "users" },
     idPosts: { type: ObjectId, ref: "posts" },
-    idParent: { type: ObjectId },
+    idParent: { type: ObjectId, ref: "comments" },
+    content: { type: String },
+    createAt: { type: String },
   },
   {
     versionKey: false,
