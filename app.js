@@ -1,53 +1,50 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-
+// File app.js (hoặc index.js)
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
 const mongoose = require("mongoose");
 
-var userRouter = require('./routes/user');
-var postsRouter = require('./routes/posts');
-var reactionRouter = require('./routes/reaction');
+const userRouter = require("./routes/user");
+const postsRouter = require("./routes/posts");
+const reactionRouter = require("./routes/reaction");
+const messageRouter = require("./routes/message");
 
-var app = express();
+const app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "hbs");
 
-app.use(logger('dev'));
+app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
 mongoose
-  .connect("mongodb+srv://api-sweets:api-sweets@api-sweets.pden2j8.mongodb.net/sweets", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(
+    "mongodb+srv://api-sweets:api-sweets@api-sweets.pden2j8.mongodb.net/sweets",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => console.log(">>>>>>>>>> DB Connected!!!!!!"));
 
+app.use("/user", userRouter);
+app.use("/posts", postsRouter);
+app.use("/reaction", reactionRouter);
+app.use("/message", messageRouter);
 
-app.use('/user', userRouter);
-app.use('/posts', postsRouter);
-app.use('/reaction', reactionRouter);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
+app.use(function (err, req, res, next) {
   res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
+  res.locals.error = req.app.get("env") === "development" ? err : {};
   res.status(err.status || 500);
-  res.render('error');
+  res.render("error");
 });
 
 module.exports = app;

@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-var modelUser = require("../models/user");
+var modelUser = require("../models/users");
 var modelPosts = require("../models/posts");
 var mongoose = require("mongoose");
 var bcrypt = require("bcryptjs");
@@ -18,7 +18,6 @@ router.get("/get-user", async function (req, res, next) {
 router.post("/add-user", async function (req, res, next) {
   try {
     const { email, password } = req.body;
-    console.log(req.body);
 
     // kiểm tra xem người dùng có tồn tại trong cơ sở dữ liệu hay không
     const exitstingUser = await modelUser.findOne({ email });
@@ -36,8 +35,13 @@ router.post("/add-user", async function (req, res, next) {
 
     // tạo model
     const Data = {
+      name: req.body.name,
         email: email,
         password: hashedPassword,
+        gender: req.body.gender,
+        date: req.body.date,
+        avatar: req.body.avatar,
+        coverImage: req.body.coverImage,
     };
 
     await modelUser.create(Data);
@@ -53,7 +57,6 @@ router.post("/add-user", async function (req, res, next) {
 router.post("/login", async function (req, res, next) {
   try {
     const { email, password } = req.body;
-    console.log(req.body);
 
     // Tìm người dùng trong cơ sở dữ liệu dựa trên email
     const user = await modelUser.findOne({ email });

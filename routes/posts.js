@@ -1,7 +1,6 @@
 var express = require("express");
 var router = express.Router();
 var modelPosts = require("../models/posts");
-var modelUser = require("../models/user");
 
 // lấy danh sách bài viết
 //http://localhost:9999/posts/get-posts
