@@ -51,4 +51,16 @@ router.get('/get-message/:idSender/:idReceiver', async (req, res, next) => {
   }
 });
 
+// Xóa tin nhắn theo id
+// http://localhost:9999/message/delete/:id
+router.delete('/delete/:id', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const data = await modelMessage.findByIdAndDelete(id);
+    res.json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Lỗi máy chủ mess' });
+  }
+});
 module.exports = router;
