@@ -8,8 +8,7 @@ const server = http.createServer(app);
 const io = socketIo(server);
 
 io.on("connection", (socket) => {
-  console.log("Có người kết nối: " + socket.id);
-
+  // console.log("Có người kết nối: " + socket.id);
   socket.on("new_message", async (data) => {
     try {
       const { idSender, idReceiver, content, time } = data;
@@ -21,13 +20,8 @@ io.on("connection", (socket) => {
         status: "sent",
         time,
       });
-
       const savedMessage = await newMessage.save();
-
-      // Gửi lại tin nhắn chỉ đến người gửi
       socket.emit("new_message", savedMessage);
-
-      // Gửi lại tin nhắn cho người nhận
       socket.to(idReceiver).emit("new_message", savedMessage);
     } catch (error) {
       console.error(error);

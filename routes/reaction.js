@@ -1,39 +1,136 @@
-var express = require("express");
-var router = express.Router();
-var modelReaction = require("../models/reaction");
+const express = require("express");
+const router = express.Router();
+const reactionModel = require("../models/reaction");
 
-// lấy danh sách bài viết
-//http://localhost:9999/reaction/get
-router.get("/get", async function (req, res, next) {
-  var idPosts = req.query.idPosts;
-  var data = await modelReaction.find({idPosts: idPosts});
-  res.json({ status: 1, message: "Thành công", data });
+// Lấy danh sách các reaction
+// http://localhost:3001/reaction
+router.get("/", async (req, res) => {
+  const data = await reactionModel.find();
+  res.json(data);
 });
 
-// Like bài viết
-// http://localhost:9999/reaction/like
-router.post("/like", async function (req, res, next) {
+// Lấy reaction theo idPosts
+// http://localhost:3001/reaction/getPostsReaction
+router.get("/getPostsReaction", async (req, res) => {
+  const id = req.params.idPosts;
+  const data = await reactionModel.find({ _id: id });
+  res.json(data);
+});
+
+// Thêm mới reaction
+// http://localhost:3001/reaction/add
+router.post("/add", async (req, res) => {
   try {
-    var postData = req.body;
+    const { idUsers, idPosts, type } = req.body;
 
-        // Nhấn lần đầu là like nhấn lần 2 là dislike
-    var checkLike2 = await modelReaction.findOne({ idUser: postData.idUser, idPosts: postData.idPosts, type: "like" });
-    if (checkLike2) {
-        await modelReaction.deleteOne({ idUser: postData.idUser, idPosts: postData.idPosts, type: "like" });
-        res.json({ status: 1, message: "Dislike bài thành công" });
-        return;
-        }
+    const checkReaction = await reactionModel.findOne({ idUsers, idPosts });
 
-    postData.idUser = postData.idUser;
-    postData.idPosts = postData.idPosts;
-    postData.type = "like";
-    var newPost = new modelReaction(postData);
-    var savedPost = await newPost.save();
+    if (checkReaction) {
+      console.log("Existing reaction:", checkReaction);
 
-    res.json({ status: 1, message: "Like bài thành công", data: savedPost });
-  } catch (err) {
-    console.error(err);
-    res.json({ status: 0, message: "Like bài thất bại", error: err.message });
+      if (checkReaction.type === type) {
+        await reactionModel.findOneAndUpdate(
+          { idUsers, idPosts },
+          { type: "None" } 
+        );
+
+        console.log(`Removing ${type} reaction`);
+      } else {
+        await reactionModel.findOneAndUpdate({ idUsers, idPosts }, { type });
+
+        console.log(`Updating reaction to ${type}`);
+      }
+
+      return res.json({
+        status: "success",
+        message: "Thêm mới reaction thành công",
+      });
+    }
+
+    const reaction = new reactionModel({ idUsers, idPosts, type });
+    await reaction.save();
+
+    res.json({
+      status: "success",
+      message: "Thêm mới reaction thành công",
+    });
+  } catch (error) {
+    console.error("Error while processing reaction:", error);
+    res.json({
+      status: "error",
+      message: "Thêm mới reaction thất bại",
+      error: error,
+    });
+  }
+});
+
+
+// Lấy danh sách idPosts theo idUsers
+// http://localhost:3001/reaction/getPostsId/:idPosts
+router.get("/getPostsId/:idPosts", async (req, res) => {
+  try {
+    const { idPosts } = req.params;
+    const data = await reactionModel.find({ idPosts }).populate("idUsers", "name avatar");
+    res.json(data);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
+// xóa reaction theo id
+// http://localhost:3001/reaction/delete/:id
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await reactionModel.findByIdAndDelete(id);
+    res.json({
+      status: "success",
+      message: "Xóa reaction thành công",
+    });
+  } catch (error) {
+    res.json({
+      status: "error",
+      message: "Xóa reaction thất bại",
+      error: error, 
+    });
+  }
+});
+
+// thêm mới reaction dựa vào idUsers và idPosts
+// http://localhost:3001/reaction/add/:idUsers/:idPosts
+router.post("/add/:idUsers/:idPosts", async (req, res) => {
+  try {
+    const { idUsers, idPosts } = req.params;
+    const { type } = req.body;
+
+    const existingReaction = await reactionModel.findOne({ idUsers, idPosts });
+
+    if (existingReaction) {
+      if (existingReaction.type === type) {
+        await reactionModel.findByIdAndDelete(existingReaction._id);
+      } else {
+        await reactionModel.findByIdAndUpdate(existingReaction._id, { type });
+      }
+      return res.json({
+        status: 1,
+        message: "Cập nhật reaction thành công",
+        idPosts,
+      });
+    } else {
+      const reaction = new reactionModel({ idUsers, idPosts, type });
+      await reaction.save();
+      return res.json({
+        status: 1,
+        message: "Thêm mới reaction thành công",
+        idPosts,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: 0,
+      message: "Thêm mới reaction thất bại",
+      error: error,
+    });
   }
 });
 

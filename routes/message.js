@@ -3,14 +3,14 @@ var router = express.Router();
 var modelMessage = require("../models/message");
 
 // lấy danh sách tin nhắn
-//http://localhost:9999/message/get-message
+//http://localhost:3001/message/get-message
 router.get("/get-message", async function (req, res, next) {
   var data = await modelMessage.find();
-  res.json( data );
+  res.json(data);
 });
 
 // Thêm tin nhắn mới
-// http://localhost:9999/message/send-message
+// http://localhost:3001/message/send-message
 router.post("/send-message", async function (req, res, next) {
   try {
     const { idSender, idReceiver, content, time } = req.body;
@@ -32,35 +32,35 @@ router.post("/send-message", async function (req, res, next) {
 });
 
 // Lấy tin nhắn theo id người gửi và id người nhận
-// http://localhost:9999/message/get-message/:idSender/:idReceiver
-router.get('/get-message/:idSender/:idReceiver', async (req, res, next) => {
+// http://localhost:3001/message/get-message/:idSender/:idReceiver
+router.get("/get-message/:idSender/:idReceiver", async (req, res, next) => {
   try {
     const { idSender, idReceiver } = req.params;
 
     const messages = await modelMessage.find({
       $or: [
         { idSender, idReceiver },
-        { idSender: idReceiver, idReceiver: idSender }, 
+        { idSender: idReceiver, idReceiver: idSender },
       ],
     });
 
     res.json(messages);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Lỗi máy chủ mess' });
+    res.status(500).json({ error: "Lỗi máy chủ mess" });
   }
 });
 
 // Xóa tin nhắn theo id
-// http://localhost:9999/message/delete/:id
-router.delete('/delete/:id', async (req, res, next) => {
+// http://localhost:3001/message/delete/:id
+router.delete("/delete/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const data = await modelMessage.findByIdAndDelete(id);
     res.json(data);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Lỗi máy chủ mess' });
+    res.status(500).json({ error: "Lỗi máy chủ mess" });
   }
 });
 module.exports = router;
